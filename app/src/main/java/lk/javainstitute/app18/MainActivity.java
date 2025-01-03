@@ -91,6 +91,7 @@ class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteViewHolde
         TextView title;
         TextView content;
         TextView date;
+        View containerView;
 
 
         public NoteViewHolder(View itemView) {
@@ -98,6 +99,7 @@ class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteViewHolde
             title=itemView.findViewById(R.id.textView5);
             content=itemView.findViewById(R.id.textView6);
             date=itemView.findViewById(R.id.textView7);
+            containerView=itemView;
         }
     }
 
@@ -113,14 +115,26 @@ class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteViewHolde
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
         cursor.moveToPosition(position);
-        Log.d("NoteBookData",String.valueOf(position));
-        Log.d("NoteBookData",cursor.getString(1));
-        Log.d("NoteBookData",cursor.getString(2));
-        Log.d("NoteBookData",cursor.getString(3));
 
-        holder.title.setText(cursor.getString(1));
-        holder.content.setText(cursor.getString(2));
-        holder.date.setText(cursor.getString(3));
+        String id=cursor.getString(0);
+        String title=cursor.getString(1);
+        String content=cursor.getString(2);
+        String date=cursor.getString(3);
+
+        holder.title.setText(title);
+        holder.content.setText(content);
+        holder.date.setText(date);
+        holder.containerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("NoteListAdapter","Clicked");
+                Intent intent=new Intent(v.getContext(),CreateNoteActivity.class);
+                intent.putExtra("id",id);
+                intent.putExtra("title",title);
+                intent.putExtra("content",content);
+                v.getContext().startActivity(intent);
+            }
+        });
 
     }
 

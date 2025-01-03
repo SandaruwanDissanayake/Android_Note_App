@@ -2,6 +2,7 @@ package lk.javainstitute.app18;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +26,7 @@ public class CreateNoteActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        String id;
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_create_note);
@@ -33,12 +35,27 @@ public class CreateNoteActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        Intent i =getIntent();
+        id= i.getStringExtra("id");
+        String title= i.getStringExtra("title");
+        String content= i.getStringExtra("content");
+        EditText editText=findViewById(R.id.editTextText1);
+        EditText editText2=findViewById(R.id.editTextTextMultiLine1);
+
+        if(title !=null){
+            editText.setText(title);
+        }
+        if(content !=null){
+            editText2.setText(content);
+        }
+
+
         Button b2=findViewById(R.id.saveNote);
         b2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText editText=findViewById(R.id.editTextText1);
-                EditText editText2=findViewById(R.id.editTextTextMultiLine1);
+
                 String title=editText.getText().toString();
                 String content=editText2.getText().toString();
 
@@ -60,8 +77,15 @@ public class CreateNoteActivity extends AppCompatActivity {
                             SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             contentValues.put("date_created",format.format(System.currentTimeMillis()));
 
-                            long insertedId=db.insert("note",null,contentValues);
-                            Log.d("insertedId","Note Saved");
+                            if(id!=null){
+                                long updatedId=db.update("note",contentValues,"`id`=?",new String[]{id});
+                                Log.d("updatedId","Note Updated");
+                            }else{
+                                long insertedId=db.insert("note",null,contentValues);
+                                Log.d("insertedId","Note Saved");
+                            }
+
+
 
                             runOnUiThread(new Runnable() {
                                 @Override
