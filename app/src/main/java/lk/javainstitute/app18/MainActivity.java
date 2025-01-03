@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import lk.javainstitute.app18.model.SQLiteHelper;
@@ -44,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         RecyclerView recyclerView=findViewById(R.id.recyclerView);
+
+        LinearLayoutManager layoutManager=new LinearLayoutManager(MainActivity.this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+
         SQLiteHelper sqLiteHelper=new SQLiteHelper(this,"note.db",null,1);
         new Thread(new Runnable() {
             @Override
@@ -58,8 +64,14 @@ public class MainActivity extends AppCompatActivity {
                         null,
                         "`id` DESC"
                 );
-                NoteListAdapter noteListAdapter= new NoteListAdapter(cursor);
-                recyclerView.setAdapter(noteListAdapter);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        NoteListAdapter noteListAdapter= new NoteListAdapter(cursor);
+                        recyclerView.setAdapter(noteListAdapter);
+                    }
+                });
+
             }}).start();
 
 
@@ -100,7 +112,12 @@ class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
-        cursor.move(position);
+        cursor.moveToPosition(position);
+        Log.d("NoteBookData",String.valueOf(position));
+        Log.d("NoteBookData",cursor.getString(1));
+        Log.d("NoteBookData",cursor.getString(2));
+        Log.d("NoteBookData",cursor.getString(3));
+
         holder.title.setText(cursor.getString(1));
         holder.content.setText(cursor.getString(2));
         holder.date.setText(cursor.getString(3));
