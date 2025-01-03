@@ -44,6 +44,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         RecyclerView recyclerView=findViewById(R.id.recyclerView);
 
         LinearLayoutManager layoutManager=new LinearLayoutManager(MainActivity.this);
@@ -73,10 +80,6 @@ public class MainActivity extends AppCompatActivity {
                 });
 
             }}).start();
-
-
-
-
 
     }
 }
@@ -133,6 +136,21 @@ class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteViewHolde
                 intent.putExtra("title",title);
                 intent.putExtra("content",content);
                 v.getContext().startActivity(intent);
+            }
+        });
+        holder.containerView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                SQLiteHelper sqLiteHelper=new SQLiteHelper(v.getContext(),"note.db",null,1);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        SQLiteDatabase sqLiteDatabase=sqLiteHelper.getWritableDatabase();
+                        int row=sqLiteDatabase.delete("note","`id`=?",new String[]{id});
+                        Log.i("MyNoteBookApp","Deleted "+row+" row");
+                    }
+                }).start();
+                return true;
             }
         });
 
