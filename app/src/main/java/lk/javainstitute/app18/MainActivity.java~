@@ -140,7 +140,7 @@ class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteViewHolde
             public void onClick(View v) {
                 Log.i("NoteListAdapter","Clicked");
                 Intent intent=new Intent(v.getContext(),CreateNoteActivity.class);
-                intent.putExtra("id",holder.id);
+                intent.putExtra("id",id);
                 intent.putExtra("title",title);
                 intent.putExtra("content",content);
                 v.getContext().startActivity(intent);
